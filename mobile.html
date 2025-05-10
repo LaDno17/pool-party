@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вечеринка с бассейном</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+        
+        body {
+            padding: 15px;
+            background-color: #f5f5f5;
+            position: relative;
+        }
+        
+        .container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .tile {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s ease;
+            position: relative;
+        }
+        
+        .tile:hover {
+            transform: translateY(-5px);
+        }
+        
+        .tile-header {
+            font-size: 1.3rem;
+            margin-bottom: 12px;
+            color: #333;
+        }
+        
+        .tile-content {
+            flex-grow: 1;
+            color: #666;
+            font-size: 0.95rem;
+        }
+        
+        /* Первая прямоугольная плитка (1x3) */
+        .tile-1 {
+            grid-column: span 3;
+            background: linear-gradient(135deg, #6e8efb, #a777e3);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 180px;
+        }
+        
+        .tile-1 .tile-header {
+            color: white;
+            text-align: center;
+            font-size: 1.5rem;
+        }
+        
+        .tile-1 .tile-content {
+            color: rgba(255, 255, 255, 0.9);
+            text-align: center;
+            font-size: 1rem;
+        }
+        
+        .view-pool-btn {
+            background-color: white;
+            color: #6e8efb;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .view-pool-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* Квадратная плитка справа (1x1) */
+        .tile-2 {
+            grid-column: 4;
+            grid-row: 1;
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            color: white;
+            cursor: pointer;
+            min-height: 180px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .tile-2 .tile-header {
+            color: white;
+            font-size: 1.3rem;
+        }
+        
+        /* Большая плитка с картой (4x4) */
+        .tile-3 {
+            grid-column: span 4;
+            padding: 0;
+            overflow: hidden;
+        }
+        
+        /* Плитка с изображением бассейна */
+        .pool-tile {
+            display: none;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            margin: 15px auto;
+            width: 90%;
+            position: relative;
+        }
+        
+        .pool-image-container {
+            width: 100%;
+            padding-bottom: 100%;
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        
+        .pool-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Стили для видео плитки */
+        .video-tile {
+            display: none;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            margin: 15px auto;
+            width: 90%;
+            position: relative;
+        }
+
+        .pool-video-container {
+            width: 100%;
+            padding-bottom: 100%;
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .pool-video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            border: none;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            font-size: 1.1rem;
+            cursor: pointer;
+            z-index: 10;
+        }
+        
+        .map-container {
+            padding: 15px;
+        }
+        
+        .map-title {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            color: #333;
+            text-align: center;
+            font-weight: bold;
+            padding: 0 15px;
+            padding-top: 15px;
+        }
+        
+        .yandex-map-container {
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+            border-radius: 0 0 12px 12px;
+        }
+        
+        .yandex-map-container iframe {
+            width: 100%;
+            height: 350px;
+            border: none;
+            display: block;
+        }
+        
+        .yandex-map-links {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1;
+        }
+        
+        .yandex-map-links a {
+            color: #eee;
+            font-size: 10px;
+            text-decoration: none;
+        }
+        
+        .yandex-map-links a:nth-child(2) {
+            top: 12px;
+        }
+        
+        /* Плитки для отзывов (2x0.5) */
+        .review-tile {
+            grid-column: span 2;
+            min-height: 140px;
+            background-color: white;
+        }
+        
+        .review-author {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background-color: #ddd;
+            margin-right: 8px;
+        }
+        
+        .author-name {
+            font-weight: bold;
+            color: #333;
+            font-size: 0.95rem;
+        }
+        
+        .review-text {
+            font-style: italic;
+            color: #666;
+            line-height: 1.4;
+            font-size: 0.9rem;
+        }
+
+        /* Плитка с текстом и кнопкой */
+        .pool-text-tile {
+            display: none;
+            background-color: white;
+            max-width: 500px;
+            margin: 15px auto;
+            text-align: center;
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 90%;
+        }
+
+        /* Новая плитка с сообщением об оплате */
+        .payment-tile {
+            display: none;
+            background-color: white;
+            max-width: 500px;
+            margin: 15px auto;
+            text-align: center;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            position: relative;
+        }
+
+        .payment-close-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            border: none;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            font-size: 1.1rem;
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        .song-btn {
+            background-color: #00f2fe;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-size: 0.95rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .song-btn:hover {
+            background-color: #00d9e6;
+            transform: scale(1.05);
+        }
+
+        /* Оверлей для размытого фона */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            z-index: 5;
+            display: none;
+        }
+
+        .modal-content {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow-y: auto;
+            z-index: 10;
+            display: none;
+            padding: 15px 0;
+        }
+
+        .payment-modal-content {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+            width: 100%;
+            max-width: 600px;
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+            
+            .tile-1, .tile-2, .tile-3, .review-tile {
+                grid-column: span 1;
+            }
+            
+            .tile-1, .tile-2 {
+                min-height: 150px;
+            }
+            
+            .review-tile {
+                min-height: 120px;
+            }
+            
+            .tile-header {
+                font-size: 1.2rem;
+            }
+            
+            .tile-content {
+                font-size: 0.9rem;
+            }
+            
+            .view-pool-btn {
+                padding: 8px 16px;
+                font-size: 0.95rem;
+            }
+            
+            .yandex-map-container iframe {
+                height: 300px;
+            }
+            
+            .pool-tile,
+            .video-tile,
+            .pool-text-tile,
+            .payment-tile {
+                width: 95%;
+                max-width: 95%;
+            }
+            
+            .close-btn, .payment-close-btn {
+                width: 30px;
+                height: 30px;
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                gap: 10px;
+            }
+            
+            .tile {
+                padding: 12px;
+                border-radius: 10px;
+            }
+            
+            .tile-header {
+                font-size: 1.1rem;
+                margin-bottom: 8px;
+            }
+            
+            .tile-content {
+                font-size: 0.85rem;
+            }
+            
+            .tile-1 .tile-header {
+                font-size: 1.3rem;
+            }
+            
+            .tile-1 .tile-content {
+                font-size: 0.95rem;
+            }
+            
+            .review-tile {
+                min-height: 110px;
+            }
+            
+            .avatar {
+                width: 30px;
+                height: 30px;
+            }
+            
+            .author-name {
+                font-size: 0.9rem;
+            }
+            
+            .review-text {
+                font-size: 0.85rem;
+            }
+            
+            .yandex-map-container iframe {
+                height: 250px;
+            }
+            
+            .map-title {
+                font-size: 1.1rem;
+                padding-top: 12px;
+            }
+            
+            .song-btn {
+                font-size: 0.9rem;
+                padding: 7px 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Первая прямоугольная плитка -->
+        <div class="tile tile-1">
+            <h2 class="tile-header">Добро пожаловать на наш сайт</h2>
+            <div class="tile-content">
+                <p>Мы не предлагаем лучшие услуги в нашем регионе, но в принципе пойдёт.</p>
+                <button class="view-pool-btn">Посмотреть бассейн</button>
+            </div>
+        </div>
+        
+        <!-- Квадратная плитка справа -->
+        <div class="tile tile-2">
+            <h2 class="tile-header">Купить пропуск на вечеринку</h2>
+            <div class="tile-content">
+                <p>Скидок нет, мы жадные!</p>
+            </div>
+        </div>
+        
+        <!-- Большая плитка с картой -->
+        <div class="tile tile-3">
+            <div class="map-title">Здесь будет бассейн!</div>
+            <div class="yandex-map-container">
+                <div class="yandex-map-links">
+                    <a href="https://yandex.ru/maps/62/krasnoyarsk/?utm_medium=mapframe&utm_source=maps" style="color:#eee;font-size:12px;position:absolute;top:0px;">Красноярск</a>
+                    <a href="https://yandex.ru/maps/62/krasnoyarsk/house/sirenevaya_ulitsa_6/bUoYdgJmT0UBQFtsfXxwcHlgYQ==/?ll=93.057704%2C56.011456&utm_medium=mapframe&utm_source=maps&z=18.98" style="color:#eee;font-size:12px;position:absolute;top:14px;">Сиреневая улица, 6 — Яндекс Карты</a>
+                </div>
+                <iframe src="https://yandex.ru/map-widget/v1/?ll=93.057704%2C56.011456&mode=whatshere&whatshere%5Bpoint%5D=93.056573%2C56.011541&whatshere%5Bzoom%5D=17&z=18.98" frameborder="1" allowfullscreen="true"></iframe>
+            </div>
+        </div>
+        
+        <!-- Плитки с отзывами -->
+        <div class="tile review-tile">
+            <div class="review-author">
+                <div class="avatar"></div>
+                <div class="author-name">Oxxxymiron</div>
+            </div>
+            <div class="review-text">
+                Детка, ты справилась на пять с плюсом.
+            </div>
+        </div>
+        
+        <div class="tile review-tile">
+            <div class="review-author">
+                <div class="avatar"></div>
+                <div class="author-name">Филипп Киркоров</div>
+            </div>
+            <div class="review-text">
+                Я клянусь, опять дверь перепутал.
+            </div>
+        </div>
+        
+        <div class="tile review-tile">
+            <div class="review-author">
+                <div class="avatar"></div>
+                <div class="author-name">Леонардо Ди Каприо</div>
+            </div>
+            <div class="review-text">
+                У P.Diddy лучше было!
+            </div>
+        </div>
+        
+        <div class="tile review-tile">
+            <div class="review-author">
+                <div class="avatar"></div>
+                <div class="author-name">Иван Петров</div>
+            </div>
+            <div class="review-text">
+                Я че тут один адекватный?
+            </div>
+        </div>
+    </div>
+
+    <!-- Оверлей для размытого фона -->
+    <div class="overlay"></div>
+
+    <!-- Модальное окно с контентом бассейна -->
+    <div class="modal-content">
+        <!-- Плитка с изображением бассейна -->
+        <div class="pool-tile">
+            <button class="close-btn">×</button>
+            <div class="pool-image-container">
+                <img src="pool_1.jpeg" alt="Фото нашего бассейна" class="pool-image">
+            </div>
+        </div>
+        
+        <!-- Плитка с видео -->
+        <div class="video-tile">
+            <div class="pool-video-container">
+                <video class="pool-video" controls>
+                    <source src="pool_v.mp4" type="video/mp4">
+                    Ваш браузер не поддерживает видео.
+                </video>
+            </div>
+        </div>
+        
+        <!-- Плитка с текстом и кнопкой -->
+        <div class="pool-text-tile">
+            <p>Здесь честно будет бассейн. А пока вы ждете можете послушать эту <button class="song-btn">песню</button></p>
+        </div>
+    </div>
+
+    <!-- Модальное окно с оплатой -->
+    <div class="payment-modal-content">
+        <!-- Новая плитка с сообщением об оплате -->
+        <div class="payment-tile">
+            <button class="payment-close-btn">×</button>
+            <h2>Оплата пропуска</h2>
+            <p>Разраб обленился и не добавил окно для оплаты, поэтому вы должны сделать вид, что оплатили.</p>
+        </div>
+    </div>
+
+    <!-- Аудио элемент (скрытый) -->
+    <audio id="pool-song" src="pool_s.mp3"></audio>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const viewPoolBtn = document.querySelector('.view-pool-btn');
+            const modalContent = document.querySelector('.modal-content');
+            const overlay = document.querySelector('.overlay');
+            const closeBtn = document.querySelector('.close-btn');
+            const songBtn = document.querySelector('.song-btn');
+            const audio = document.getElementById('pool-song');
+            const poolTile = document.querySelector('.pool-tile');
+            const videoTile = document.querySelector('.video-tile');
+            const poolTextTile = document.querySelector('.pool-text-tile');
+            
+            // Элементы для новой функциональности оплаты
+            const buyTicketTile = document.querySelector('.tile-2');
+            const paymentModalContent = document.querySelector('.payment-modal-content');
+            const paymentTile = document.querySelector('.payment-tile');
+            const paymentCloseBtn = document.querySelector('.payment-close-btn');
+            
+            // Показать изображение бассейна и текст
+            viewPoolBtn.addEventListener('click', function() {
+                // Показать оверлей и модальное окно
+                overlay.style.display = 'block';
+                modalContent.style.display = 'block';
+                poolTile.style.display = 'block';
+                videoTile.style.display = 'block';
+                poolTextTile.style.display = 'block';
+                document.body.style.overflow = 'hidden';
+            });
+            
+            // Закрыть изображение бассейна
+            closeBtn.addEventListener('click', function() {
+                // Скрыть оверлей и модальное окно
+                overlay.style.display = 'none';
+                modalContent.style.display = 'none';
+                document.body.style.overflow = 'auto';
+                
+                // Остановить музыку
+                audio.pause();
+                audio.currentTime = 0;
+                songBtn.textContent = 'песню';
+            });
+            
+            // Воспроизвести/остановить песню
+            songBtn.addEventListener('click', function() {
+                if (audio.paused) {
+                    audio.play();
+                    songBtn.textContent = 'песню';
+                } else {
+                    audio.pause();
+                    audio.currentTime = 0;
+                    songBtn.textContent = 'песню';
+                }
+            });
+            
+            // Показать сообщение об оплате при клике на плитку покупки
+            buyTicketTile.addEventListener('click', function() {
+                overlay.style.display = 'block';
+                paymentModalContent.style.display = 'block';
+                paymentTile.style.display = 'block';
+                document.body.style.overflow = 'hidden';
+            });
+            
+            // Закрыть сообщение об оплате
+            paymentCloseBtn.addEventListener('click', function() {
+                overlay.style.display = 'none';
+                paymentModalContent.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            });
+            
+            // Закрыть при клике на оверлей
+            overlay.addEventListener('click', function() {
+                overlay.style.display = 'none';
+                modalContent.style.display = 'none';
+                paymentModalContent.style.display = 'none';
+                document.body.style.overflow = 'auto';
+                
+                // Остановить музыку
+                audio.pause();
+                audio.currentTime = 0;
+                songBtn.textContent = 'песню';
+            });
+        });
+    </script>
+</body>
+</html>
