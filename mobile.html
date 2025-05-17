@@ -54,9 +54,27 @@
             font-size: 0.95rem;
         }
         
-        /* Первая прямоугольная плитка (1x3) */
+        /* Голубая плитка (1x1) - теперь первая */
         .tile-1 {
-            grid-column: span 3;
+            grid-column: 1;
+            grid-row: 1;
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            color: white;
+            cursor: pointer;
+            min-height: 180px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .tile-1 .tile-header {
+            color: white;
+            font-size: 1.3rem;
+        }
+        
+        /* Фиолетовая плитка (1x3) - теперь вторая */
+        .tile-2 {
+            grid-column: 2 / span 3;
             background: linear-gradient(135deg, #6e8efb, #a777e3);
             color: white;
             display: flex;
@@ -66,13 +84,13 @@
             min-height: 180px;
         }
         
-        .tile-1 .tile-header {
+        .tile-2 .tile-header {
             color: white;
             text-align: center;
             font-size: 1.5rem;
         }
         
-        .tile-1 .tile-content {
+        .tile-2 .tile-content {
             color: rgba(255, 255, 255, 0.9);
             text-align: center;
             font-size: 1rem;
@@ -95,24 +113,6 @@
         .view-pool-btn:hover {
             transform: scale(1.05);
             box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
-        }
-        
-        /* Квадратная плитка справа (1x1) */
-        .tile-2 {
-            grid-column: 4;
-            grid-row: 1;
-            background: linear-gradient(135deg, #4facfe, #00f2fe);
-            color: white;
-            cursor: pointer;
-            min-height: 180px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-        
-        .tile-2 .tile-header {
-            color: white;
-            font-size: 1.3rem;
         }
         
         /* Большая плитка с картой (4x4) */
@@ -384,17 +384,17 @@
             }
             
             .tile-2 {
-                order: 3; /* Перемещаем плитку с оплатой после плитки с фото */
+                order: 2;
                 grid-column: span 1;
             }
             
             .tile-3 {
-                order: 4;
+                order: 3;
                 grid-column: span 1;
             }
             
             .review-tile {
-                order: 5;
+                order: 4;
                 grid-column: span 1;
                 min-height: 120px;
             }
@@ -458,11 +458,11 @@
                 font-size: 0.85rem;
             }
             
-            .tile-1 .tile-header {
+            .tile-2 .tile-header {
                 font-size: 1.3rem;
             }
             
-            .tile-1 .tile-content {
+            .tile-2 .tile-content {
                 font-size: 0.95rem;
             }
             
@@ -501,20 +501,20 @@
 </head>
 <body>
     <div class="container">
-        <!-- Первая прямоугольная плитка -->
+        <!-- Голубая плитка теперь первая -->
         <div class="tile tile-1">
+            <h2 class="tile-header">Купить пропуск на вечеринку</h2>
+            <div class="tile-content">
+                <p>Скидок нет, мы жадные!</p>
+            </div>
+        </div>
+        
+        <!-- Фиолетовая плитка теперь вторая -->
+        <div class="tile tile-2">
             <h2 class="tile-header">Добро пожаловать на наш сайт</h2>
             <div class="tile-content">
                 <p>Мы не предлагаем лучшие услуги в нашем регионе, но в принципе пойдёт.</p>
                 <button class="view-pool-btn">Посмотреть бассейн</button>
-            </div>
-        </div>
-        
-        <!-- Квадратная плитка справа -->
-        <div class="tile tile-2">
-            <h2 class="tile-header">Купить пропуск на вечеринку</h2>
-            <div class="tile-content">
-                <p>Скидок нет, мы жадные!</p>
             </div>
         </div>
         
@@ -627,7 +627,7 @@
             const poolTextTile = document.querySelector('.pool-text-tile');
             
             // Элементы для новой функциональности оплаты
-            const buyTicketTile = document.querySelector('.tile-2');
+            const buyTicketTile = document.querySelector('.tile-1'); // Изменено с tile-2 на tile-1
             const paymentModalContent = document.querySelector('.payment-modal-content');
             const paymentTile = document.querySelector('.payment-tile');
             const paymentCloseBtn = document.querySelector('.payment-close-btn');
